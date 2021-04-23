@@ -2,6 +2,7 @@ package domain
 
 import (
 	"github.com/stretchr/testify/assert"
+	"github.com/voicurobert/golang-microservices/mvc/services"
 	"net/http"
 	"testing"
 )
@@ -10,7 +11,7 @@ func TestGetUserNoUserFound(t *testing.T) {
 	// Initialization
 
 	// Execution
-	user, err := GetUser(0)
+	user, err := services.UsersService.GetUser(0)
 
 	// Validation
 
@@ -34,7 +35,7 @@ func TestGetUserNoUserFound(t *testing.T) {
 }
 
 func TestGetUserNoError(t *testing.T) {
-	user, err := GetUser(123)
+	user, err := services.UsersService.GetUser(123)
 
 	assert.Nil(t, err)
 	assert.NotNil(t, user)
