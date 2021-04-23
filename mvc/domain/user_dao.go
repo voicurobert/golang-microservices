@@ -9,7 +9,7 @@ import (
 var (
 	users = map[int64]*User{
 		123: &User{
-			ID:        1,
+			ID:        123,
 			FirstName: "Fede",
 			LastName:  "Leo",
 			Email:     "email@gmail.com",
