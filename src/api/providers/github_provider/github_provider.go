@@ -6,7 +6,6 @@ import (
 	"github.com/voicurobert/golang-microservices/src/api/clients/rest_client"
 	"github.com/voicurobert/golang-microservices/src/api/domain/github"
 	"io/ioutil"
-	"log"
 	"net/http"
 )
 
@@ -26,8 +25,8 @@ func CreateRepo(accessToken string, request github.CreateRepoRequest) (*github.C
 	headers.Set(headerAuthorization, getAuthorizationHeader(accessToken))
 
 	response, err := rest_client.Post(urlCreateRepo, request, headers)
+
 	if err != nil {
-		log.Printf("error when trying to create new repo in github %s\n", err.Error())
 		return nil, &github.GithubErrorResponse{
 			StatusCode: http.StatusInternalServerError,
 			Message:    err.Error(),
@@ -41,13 +40,29 @@ func CreateRepo(accessToken string, request github.CreateRepoRequest) (*github.C
 			Message:    err.Error(),
 		}
 	}
+
+	defer response.Body.Close()
+
 	if response.StatusCode > 299 {
 		// error from github
 		var errResponse github.GithubErrorResponse
 		if err := json.Unmarshal(bytes, &errResponse); err != nil {
+			return nil, &github.GithubErrorResponse{
+				StatusCode: http.StatusInternalServerError,
+				Message:    "invalid json response body",
+			}
+		}
+		errResponse.StatusCode = response.StatusCode
+		return nil, &errResponse
+	}
 
+	var result = github.CreateRepoResponse{}
+	if err := json.Unmarshal(bytes, &result); err != nil {
+		return nil, &github.GithubErrorResponse{
+			StatusCode: http.StatusInternalServerError,
+			Message:    "error when trying to unmarshalling github create repo response",
 		}
 	}
 
-	return nil, nil
+	return &result, nil
 }
