@@ -1,11 +1,11 @@
 package services
 
 import (
+	"github.com/voicurobert/golang-microservices/src/api/config"
 	"github.com/voicurobert/golang-microservices/src/api/domain/github"
 	repos "github.com/voicurobert/golang-microservices/src/api/domain/repositories"
 	"github.com/voicurobert/golang-microservices/src/api/providers/github_provider"
-	"github.com/voicurobert/golang-microservices/src/config"
-	"github.com/voicurobert/golang-microservices/src/utils/errors"
+	"github.com/voicurobert/golang-microservices/src/api/utils/errors"
 	"strings"
 )
 
