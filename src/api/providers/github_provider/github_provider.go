@@ -12,8 +12,7 @@ import (
 const (
 	headerAuthorization       = "Authorization"
 	headerAuthorizationFormat = "token %s"
-
-	urlCreateRepo = "https://api.github.com/user/repos"
+	urlCreateRepo             = "https://api.github.com/user/repos"
 )
 
 func getAuthorizationHeader(accessToken string) string {

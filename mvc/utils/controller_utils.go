@@ -17,7 +17,3 @@ func RespondError(c *gin.Context, err *ApplicationError) {
 	}
 	c.JSON(err.StatusCode, err)
 }
-
-var (
-	AccessToken = "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"
-)

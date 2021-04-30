@@ -27,7 +27,7 @@ func TestCreateRepoInvalidJsonRequest(t *testing.T) {
 
 	CreateRepo(c)
 
-	assert.EqualValuesf(t, http.StatusBadRequest, response.Code, "")
+	assert.EqualValues(t, http.StatusBadRequest, response.Code)
 
 	apiErr, err := errors.NewApiErrorFromBytes(response.Body.Bytes())
 
@@ -38,10 +38,6 @@ func TestCreateRepoInvalidJsonRequest(t *testing.T) {
 }
 
 func TestCreateRepoErrorFromGithub(t *testing.T) {
-	response := httptest.NewRecorder()
-	request, _ := http.NewRequest(http.MethodPost, "/repositories", strings.NewReader(`{"name": "testing"}`))
-	c := test_utils.GetMockedContext(request, response)
-
 	rest_client.FlushMockups()
 	rest_client.AddMockup(rest_client.Mock{
 		Url:        "https://api.github.com/user/repos",
@@ -53,9 +49,13 @@ func TestCreateRepoErrorFromGithub(t *testing.T) {
 		Err: nil,
 	})
 
+	response := httptest.NewRecorder()
+	request, _ := http.NewRequest(http.MethodPost, "/repositories", strings.NewReader(`{"name": "testing"}`))
+	c := test_utils.GetMockedContext(request, response)
+
 	CreateRepo(c)
 
-	assert.EqualValuesf(t, http.StatusUnauthorized, response.Code, "")
+	assert.EqualValues(t, http.StatusUnauthorized, response.Code)
 
 	apiErr, err := errors.NewApiErrorFromBytes(response.Body.Bytes())
 
@@ -66,11 +66,6 @@ func TestCreateRepoErrorFromGithub(t *testing.T) {
 }
 
 func TestCreateRepoNoError(t *testing.T) {
-	response := httptest.NewRecorder()
-	request, _ := http.NewRequest(http.MethodPost, "/repositories", strings.NewReader(`{"name": "testing"}`))
-
-	c := test_utils.GetMockedContext(request, response)
-
 	rest_client.FlushMockups()
 	rest_client.AddMockup(rest_client.Mock{
 		Url:        "https://api.github.com/user/repos",
@@ -82,9 +77,14 @@ func TestCreateRepoNoError(t *testing.T) {
 		Err: nil,
 	})
 
+	response := httptest.NewRecorder()
+	request, _ := http.NewRequest(http.MethodPost, "/repositories", strings.NewReader(`{"name": "testing"}`))
+
+	c := test_utils.GetMockedContext(request, response)
+
 	CreateRepo(c)
 
-	assert.EqualValuesf(t, http.StatusCreated, response.Code, "")
+	assert.EqualValues(t, http.StatusCreated, response.Code)
 	var result repositories.CreateRepoResponse
 	err := json.Unmarshal(response.Body.Bytes(), &result)
 	assert.Nil(t, err)
